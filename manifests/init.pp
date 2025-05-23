@@ -63,8 +63,8 @@ class graylogcollectorsidecar (
     }
 
     exec { 'download package':
-      command => "/usr/bin/wget -q https://github.com/Graylog2/collector-sidecar/releases/download/${version}/graylog-sidecar-${version}-1.${facts['os']['architecture']}.${package_suffix} -O /tmp/graylog-sidecar-${version}-1.${facts['os']['architecture']}.${package_suffix}",
-      creates => "/tmp/graylog-sidecar-${version}-1.${facts['os']['architecture']}.${package_suffix}",
+      command => "/usr/bin/wget -q https://github.com/Graylog2/collector-sidecar/releases/download/${version}/graylog-sidecar-${version}-1.${facts['os']['architecture']}.${package_suffix} -O /tmp/graylog-sidecar.${package_suffix}",
+      creates => "/tmp/graylog-sidecar.${package_suffix}",
     }
 
     # Install the package
@@ -74,8 +74,7 @@ class graylogcollectorsidecar (
         ensure   => 'installed',
         name     => 'graylog-sidecar',
         provider => $package_provider,
-        #source   => "/tmp/graylog-sidecar.${package_suffix}",
-        source   => "/tmp/graylog-sidecar-${version}-1.${facts['os']['architecture']}.${package_suffix}",
+        source   => "/tmp/graylog-sidecar.${package_suffix}",
     }
 
     # Create a sidecar service
