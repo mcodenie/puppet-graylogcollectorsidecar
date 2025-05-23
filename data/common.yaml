@@ -6,25 +6,29 @@ graylogcollectorsidecar::password: ""
 
 # Configuration defaults
 graylogcollectorsidecar::node_id: "%{facts.networking.hostname}"
-graylogcollectorsidecar::collector_id: "file:/etc/graylog/collector-sidecar/collector-id"
-graylogcollectorsidecar::cache_path: "/var/cache/graylog/collector-sidecar"
-graylogcollectorsidecar::log_path: "/var/log/graylog/collector-sidecar"
+graylogcollectorsidecar::collector_id: "file:/etc/graylog/sidecar/node-id"
+graylogcollectorsidecar::cache_path: "/var/cache/graylog-sidecar"
+graylogcollectorsidecar::log_path: "/var/log/graylog-sidecar"
 graylogcollectorsidecar::log_rotation_time: 86400
 graylogcollectorsidecar::log_max_age: 604800
 graylogcollectorsidecar::update_interval: 10
 graylogcollectorsidecar::tls_skip_verify: false
 graylogcollectorsidecar::send_status: true
+#nxlog need to be manually installed
 graylogcollectorsidecar::backends:
     -   name: "nxlog"
         enabled: false
         binary_path: "/usr/bin/nxlog"
-        configuration_path: "/etc/graylog/collector-sidecar/generated/nxlog.conf"
+        configuration_path: "/var/lib/graylog-sidecar/generated/nxlog.conf"
     -   name: "filebeat"
         enabled: true
-        binary_path: "/usr/bin/filebeat"
-        configuration_path: "/etc/graylog/collector-sidecar/generated/filebeat.yml"
+        binary_path: "/usr/lib/graylog-sidecar/filebeat"
+        configuration_path: "/var/lib/graylog-sidecar/generated/filebeat.yml"
+    -   name: "auditbeat"
+        enabled: true
+        binary_path: "/usr/lib/graylog-sidecar/auditbeat"
+        configuration_path: "/var/lib/graylog-sidecar/generated/auditbeat.yml"
 
 # Installation details
-
-graylogcollectorsidecar::service_creates: "/etc/init/collector-sidecar.conf"
-graylogcollectorsidecar::sidecar_yaml_file: "/etc/graylog/collector-sidecar/collector_sidecar.yml"
+graylogcollectorsidecar::service_creates: "/etc/systemd/system/graylog-sidecar.service"
+graylogcollectorsidecar::sidecar_yaml_file: "/etc/graylog/sidecar/sidecar.yml"

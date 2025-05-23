@@ -1,6 +1,6 @@
 Facter.add(:installed_sidecar_version) do
   setcode do
-    command = '/usr/bin/graylog-collector-sidecar -version'
+    command = '/usr/bin/graylog-sidecar -version'
     version = ''
 
     begin

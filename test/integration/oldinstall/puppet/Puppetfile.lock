@@ -1,10 +1,8 @@
 FORGE
-  remote: https://forgeapi.puppetlabs.com
+  remote: https://forgeapi.puppet.com
   specs:
-    dodevops-githubreleases (4.0.0)
     mmckinst-hash2stuff (1.2.1)
 
 DEPENDENCIES
-  dodevops-githubreleases (= 4.0.0)
   mmckinst-hash2stuff (= 1.2.1)
 

@@ -4,7 +4,7 @@ if ['redhat'].include?(os[:family])
 
   # Check configuration
 
-  describe file('/etc/graylog/collector-sidecar/collector_sidecar.yml') do
+  describe file('/etc/graylog/sidecar/sidecar.yml') do
     it { is_expected.to exist }
     it { is_expected.to be_file }
     it { is_expected.to contain('TESTTAG') }
@@ -16,7 +16,7 @@ if ['redhat'].include?(os[:family])
 
   # Check service
 
-  describe service('collector-sidecar') do
+  describe service('graylog-sidecar') do
     it { is_expected.to be_enabled }
     it { is_expected.to be_running }
   end

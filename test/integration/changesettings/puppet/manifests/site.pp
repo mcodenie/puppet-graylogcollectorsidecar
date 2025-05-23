@@ -13,16 +13,12 @@ $_use_oauth = $facts['github_use_oauth'] ? {
 }
 
 class {
-  '::graylogcollectorsidecar':
+  'graylogcollectorsidecar':
     api_url         => 'https://graylog.company.com',
-    version         => '0.1.0',
+    version         => '1.1.5',
     tags            => [
       'TESTTAG',
     ],
     tls_skip_verify => true,
     log_max_age     => 4711,
-    use_auth        => $_use_auth,
-    use_oauth       => $_use_oauth,
-    username        => $facts['github_username'],
-    password        => $facts['github_password'],
 }

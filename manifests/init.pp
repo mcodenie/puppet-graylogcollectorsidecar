@@ -1,13 +1,10 @@
-# @summary Installs and configures graylog-collector-sidecar
+# @summary Installs and configures graylog-sidecar
 # @see https://github.com/Graylog2/collector-sidecar Graylog-Collector package
-# @see https://docs.graylog.org/en/2.4/pages/collector_sidecar.html Graylog-Collector documentation
+# @see https://go2docs.graylog.org/current/getting_in_log_data/graylog_sidecar.html Graylog Sidecar documentation
 # @param api_url URL to the Graylog server
+# @param api_token Token to the Graylog server
 # @param tags Array of tags to set in the collector sidecar configuration
 # @param version Version of the collector to ensure
-# @param use_auth Use authentication for Github
-# @param use_oauth Use OAuth instead of basic authentication for Github
-# @param username Username for Github
-# @param password Password for Github
 # @param update_interval Graylog-Collector sidecar configuration item "update_interval". Check docs for info.
 # @param tls_skip_verify Graylog-Collector sidecar configuration item "tls_skip_verify". Check docs for info.
 # @param send_status Graylog-Collector sidecar configuration item "send_status". Check docs for info.
@@ -25,12 +22,9 @@
 # @param package_provider The package provider used to install the package [internal]
 class graylogcollectorsidecar (
   String $api_url,
+  String $api_token,
   Array[String] $tags,
   String $version,
-  Variant[Boolean, String] $use_auth,
-  Variant[Boolean, String] $use_oauth,
-  String $username,
-  String $password,
   Integer $update_interval,
   Boolean $tls_skip_verify,
   Boolean $send_status,
@@ -47,17 +41,16 @@ class graylogcollectorsidecar (
   Optional[String] $package_suffix        = undef,
   Optional[String] $package_provider      = undef,
 ) {
-
   if (!$package_suffix or !$package_provider) {
     warning('OS currently not supported by the graylog collector sidecar module')
   }
 
-  $_require_config = $::installed_sidecar_version ? {
+  $_require_config = $facts['installed_sidecar_version'] ? {
     $version => undef,
     default  => Package['graylog-sidecar']
   }
 
-  if ($::installed_sidecar_version == $version) {
+  if ($facts['installed_sidecar_version'] == $version) {
     debug("Already installed sidecard version ${version}")
   } else {
     # Download package
@@ -69,18 +62,9 @@ class graylogcollectorsidecar (
       $is_tag = true
     }
 
-    githubreleases_download {
-      "/tmp/collector-sidecar.${package_suffix}":
-        author            => 'Graylog2',
-        repository        => 'collector-sidecar',
-        release           => $version,
-        is_tag            => $is_tag,
-        asset             => true,
-        asset_filepattern => "${::architecture}\\.${package_suffix}",
-        use_auth          => $use_auth,
-        use_oauth         => $use_oauth,
-        username          => $username,
-        password          => $password,
+    exec { 'download package':
+      command => "/usr/bin/wget -q https://github.com/Graylog2/collector-sidecar/releases/download/${version}/graylog-sidecar-${version}-1.${facts['os']['architecture']}.${package_suffix} -O /tmp/graylog-sidecar-${version}-1.${facts['os']['architecture']}.${package_suffix}",
+      creates => "/tmp/graylog-sidecar-${version}-1.${facts['os']['architecture']}.${package_suffix}",
     }
 
     # Install the package
@@ -88,9 +72,10 @@ class graylogcollectorsidecar (
     -> package {
       'graylog-sidecar':
         ensure   => 'installed',
-        name     => 'collector-sidecar',
+        name     => 'graylog-sidecar',
         provider => $package_provider,
-        source   => "/tmp/collector-sidecar.${package_suffix}",
+        #source   => "/tmp/graylog-sidecar.${package_suffix}",
+        source   => "/tmp/graylog-sidecar-${version}-1.${facts['os']['architecture']}.${package_suffix}",
     }
 
     # Create a sidecar service
@@ -98,9 +83,9 @@ class graylogcollectorsidecar (
     -> exec {
       'install_sidecar_service':
         creates => $service_creates,
-        command => 'graylog-collector-sidecar -service install',
-        path    => [ '/usr/bin', '/bin' ],
-        before  => Service['sidecar']
+        command => 'graylog-sidecar -service install',
+        path    => ['/usr/bin', '/bin'],
+        before  => Service['sidecar'],
     }
   }
 
@@ -109,12 +94,13 @@ class graylogcollectorsidecar (
   $_list_log_files_addition = $list_log_files ? {
     undef   => {},
     default => {
-      list_log_files => $list_log_files
+      list_log_files => $list_log_files,
     }
   }
 
   $_configuration = {
     server_url        => $api_url,
+    server_api_token  => $api_token,
     update_interval   => $update_interval,
     tls_skip_verify   => $tls_skip_verify,
     send_status       => $send_status,
@@ -130,9 +116,9 @@ class graylogcollectorsidecar (
 
   file {
     $sidecar_yaml_file:
-      ensure  => 'present',
+      ensure  => 'file',
       content => hash2yaml($_configuration),
-      require => $_require_config
+      require => $_require_config,
   }
 
   # Start the service
@@ -140,7 +126,6 @@ class graylogcollectorsidecar (
   service {
     'sidecar':
       ensure => 'running',
-      name   => 'collector-sidecar',
+      name   => 'graylog-sidecar',
   }
-
 }
