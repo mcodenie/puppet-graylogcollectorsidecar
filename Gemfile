@@ -47,7 +47,7 @@ end
 group :system_tests do
   gem "puppet_litmus", '~> 1.0',   require: false, platforms: [:ruby, :x64_mingw]
   gem "CFPropertyList", '< 3.0.7', require: false, platforms: [:mswin, :mingw, :x64_mingw]
-  gem "serverspec", '~> 2.41.8',     require: false
+  gem "serverspec", '~> 2.41.8',   require: false
 end
 
 gems = {}
