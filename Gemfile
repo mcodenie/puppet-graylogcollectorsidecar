@@ -36,7 +36,7 @@ group :development do
   gem "rb-readline", '= 0.5.5',                  require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "kitchen-docker", '2.9.0',                 require: false
   gem "kitchen-puppet", '3.5.1',                 require: false
-  gem "serverspec", '~> 2.41.8',                 require: false
+  gem "serverspec", '2.42.3',                    require: false
   gem "test-kitchen", '~> 3.7',                  require: false
 end
 group :development, :release_prep do
@@ -47,7 +47,7 @@ end
 group :system_tests do
   gem "puppet_litmus", '~> 1.0',   require: false, platforms: [:ruby, :x64_mingw]
   gem "CFPropertyList", '< 3.0.7', require: false, platforms: [:mswin, :mingw, :x64_mingw]
-  gem "serverspec", '~> 2.41.8',   require: false
+  gem "serverspec", '2.42.3',      require: false
 end
 
 gems = {}

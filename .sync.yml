@@ -12,9 +12,9 @@ Gemfile:
             - gem: "kitchen-puppet"
               version: "3.5.1"
             - gem: "serverspec"
-              version: "2.41.5"
+              version: "2.42.3"
             - gem: "test-kitchen"
-              version: "2.2.5"
+              version: "~> 3.7"
 Rakefile:
     requires:
         - "kitchen/rake_tasks"
