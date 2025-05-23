@@ -45,7 +45,7 @@ group :development, :release_prep do
   gem "puppet-blacksmith", '~> 7.0',      require: false
 end
 group :system_tests do
-  gem "puppet_litmus", '~> 1.0',   require: false, platforms: [:ruby, :x64_mingw]
+  gem "puppet_litmus", '~> 1.6.1', require: false, platforms: [:ruby, :x64_mingw]
   gem "CFPropertyList", '< 3.0.7', require: false, platforms: [:mswin, :mingw, :x64_mingw]
   gem "serverspec", '2.42.3',      require: false
 end
@@ -58,8 +58,8 @@ hiera_version = ENV.fetch('HIERA_GEM_VERSION', nil)
 # If PUPPET_FORGE_TOKEN is set then use authenticated source for both puppet and facter, since facter is a transitive dependency of puppet
 # Otherwise, do as before and use location_for to fetch gems from the default source
 if !ENV['PUPPET_FORGE_TOKEN'].to_s.empty?
-  gems['puppet'] = ['~> 8.11', { require: false, source: 'https://rubygems-puppetcore.puppet.com' }]
-  gems['facter'] = ['~> 4.11', { require: false, source: 'https://rubygems-puppetcore.puppet.com' }]
+  gems['puppet'] = ['~> 7.34', { require: false, source: 'https://rubygems-puppetcore.puppet.com' }]
+  gems['facter'] = ['~> 4.10', { require: false, source: 'https://rubygems-puppetcore.puppet.com' }]
 else
   gems['puppet'] = location_for(puppet_version)
   gems['facter'] = location_for(facter_version) if facter_version
